@@ -136,22 +136,30 @@ def hexadecimal_octal(hexadecimal):
 
 
 def octal_binary(octal):
+    binary = ""
+    if '.' not in octal:
+        octal += '.0'
     decimal_part = int(octal.split('.')[0], 8)
-    fractional_part = float("0." + octal.split('.')[1])
     
-    # Convert decimal part to binary
-    decimal_binary = bin(decimal_part)[2:]
+    # Convert fractional part to binary without using float
+    fractional_part = octal.split('.')[1]
+    fractional_binary = ''.join(format(int(digit, 8), '03b') for digit in fractional_part)
     
-    # Convert fractional part to binary
-    fractional_binary = ''.join(format(int(digit, 8), '03b') for digit in octal.split('.')[1])
-    
-    binary_result = f"{decimal_binary}.{fractional_binary}"
-    return binary_result
+    binary += bin(decimal_part)[2:]
+    binary += "."
+    binary += fractional_binary
+    return binary
 
 def octal_decimal(octal):
+    if '.' not in octal:
+        octal += '.0'
     integer_part = int(octal.split('.')[0], 8)
-    fractional_part = int(octal.split('.')[1], 8) / (8 ** len(octal.split('.')[1]))
-    return integer_part + fractional_part
+    
+    # Convert fractional part to decimal without using float
+    fractional_part = int(octal.split('.')[1], 8)
+    fractional_decimal = fractional_part / (8 ** len(octal.split('.')[1]))
+    
+    return integer_part + fractional_decimal
 
 def octal_hexadecimal(octal):
     # Convert octal to decimal, taking care of integer and fractional parts as decimal point may or may not be present
@@ -249,7 +257,7 @@ def main():
         print("4. Binary Arithmetic")
         print("5. Exit\n")
         
-        choice = input("Enter choice (1/2/3/4): ")
+        choice = input("Enter choice (1/2/3/4/5): ")
         print('\n')
 
         if choice == '1':
